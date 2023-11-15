@@ -111,7 +111,7 @@ router.post("/sign-out", authController.signOut);
 /**
  * @swagger
  * /auth/me:
- *   post:
+ *   get:
  *     tags: [Auth]
  *     responses:
  *       '200':
@@ -128,6 +128,6 @@ router.post("/sign-out", authController.signOut);
  *                 message:
  *                   type: string
  */
-router.post("/me", authenticateToken, authController.getMe);
+router.get("/me", authenticateToken, authController.getMe);
 
 module.exports = router;
