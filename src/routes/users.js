@@ -2,6 +2,7 @@ const app = require("express");
 const authenticateToken = require("../middlewares/authenticateToken");
 const usersController = require("../controllers/users");
 const usersValidator = require("../middlewares/validators/users");
+const upload = require("../configs/upload");
 
 const router = app.Router();
 router.use(authenticateToken);
@@ -17,22 +18,24 @@ router.use(authenticateToken);
  * /users/update-profile:
  *   patch:
  *     tags: [Users]
+ *     consumes:
+ *       - multipart/form-data
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
  *               firstName:
  *                 type: string
- *                 example: firstName (optional)
+ *                 example: firstName
  *               lastName:
  *                 type: string
- *                 example: lastName (optional)
+ *                 example: lastName
  *               avatar:
  *                 type: string
- *                 example: avatar (optional)
+ *                 format: binary
  *     responses:
  *       '200':
  *         description: A successful response
@@ -44,14 +47,15 @@ router.use(authenticateToken);
  *                 success:
  *                   type: boolean
  *                 data:
- *                   type: string
- *                 message:
  *                   type: object
+ *                 message:
+ *                   type: string
  */
 
 router.patch(
   "/update-profile",
   usersValidator.updateProfile,
+  upload.single("avatar"),
   usersController.updateProfile
 );
 
@@ -81,9 +85,9 @@ router.patch(
  *                 success:
  *                   type: boolean
  *                 data:
- *                   type: string
- *                 message:
  *                   type: object
+ *                 message:
+ *                   type: string
  */
 router.patch(
   "/change-password",

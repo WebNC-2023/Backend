@@ -1,5 +1,6 @@
 const db = require("../configs/db");
 const bcrypt = require("bcrypt");
+const filesService = require("./files");
 
 const saltRounds = 10;
 
@@ -45,7 +46,9 @@ module.exports = {
         where id='${id}'
       `
     );
+
     if (res.rows.length === 0) return false;
+    if (res.rows[0].avatar) filesService.removeFile(res.rows[0].avatar);
 
     const currentUser = res.rows[0];
     const updatedUserData = [
