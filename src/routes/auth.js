@@ -2,6 +2,7 @@ const app = require("express");
 const router = app.Router();
 const authController = require("../controllers/auth");
 const authValidator = require("../middlewares/validators/auth");
+const authenticateToken = require("../middlewares/authenticateToken");
 
 /**
  * @swagger
@@ -44,9 +45,9 @@ const authValidator = require("../middlewares/validators/auth");
  *                 success:
  *                   type: boolean
  *                 data:
- *                   type: string
- *                 message:
  *                   type: object
+ *                 message:
+ *                   type: string
  */
 router.post("/sign-up", authValidator.signUp, authController.signUp);
 
@@ -79,9 +80,9 @@ router.post("/sign-up", authValidator.signUp, authController.signUp);
  *                 success:
  *                   type: boolean
  *                 data:
- *                   type: string
- *                 message:
  *                   type: object
+ *                 message:
+ *                   type: string
  */
 router.post("/sign-in", authValidator.signIn, authController.signIn);
 
@@ -101,10 +102,32 @@ router.post("/sign-in", authValidator.signIn, authController.signIn);
  *                 success:
  *                   type: boolean
  *                 data:
- *                   type: string
- *                 message:
  *                   type: object
+ *                 message:
+ *                   type: string
  */
 router.post("/sign-out", authController.signOut);
+
+/**
+ * @swagger
+ * /auth/me:
+ *   post:
+ *     tags: [Auth]
+ *     responses:
+ *       '200':
+ *         description: A successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                 message:
+ *                   type: string
+ */
+router.post("/me", authenticateToken, authController.getMe);
 
 module.exports = router;

@@ -80,4 +80,15 @@ module.exports = {
       message: "Sign out successfully",
     });
   },
+
+  async getMe(req, res) {
+    const user = await userService.getUserById(req.user.userId);
+    const { password, ...data } = user;
+
+    return res.status(200).send({
+      success: true,
+      data: data,
+      message: "",
+    });
+  },
 };

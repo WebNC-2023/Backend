@@ -4,8 +4,9 @@ module.exports = {
   async updateProfile(req, res) {
     try {
       const user = await userService.update({
-        id: req.user.userId,
         ...req.body,
+        avatar: req?.file?.filename ? req.file.filename : null,
+        id: req.user.userId,
       });
 
       const { password, ...data } = user;
@@ -24,8 +25,8 @@ module.exports = {
   async changePassword(req, res) {
     try {
       const user = await userService.updatePassword({
-        id: req.user.userId,
         ...req.body,
+        id: req.user.userId,
       });
 
       const { password, ...data } = user;
