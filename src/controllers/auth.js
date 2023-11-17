@@ -35,7 +35,7 @@ module.exports = {
         return res.status(401).send({
           success: false,
           data: null,
-          message: "Unauthorized",
+          message: "Email or Password wrong !",
         });
       }
 
