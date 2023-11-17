@@ -76,13 +76,17 @@ module.exports = {
   },
 
   async signOut(req, res) {
-    res.clearCookie("accessToken", {
-      path: "/",
-      domain: ".webnc-2023.vercel.app",
+    res.cookie('accessToken', null, {
+      expires: new Date(0),
+      path: '/',
+      secure: true,
+      sameSite: 'none'
     });
-    res.clearCookie("refreshToken", {
-      path: "/",
-      domain: ".webnc-2023.vercel.app",
+    res.cookie('refreshToken', null, {
+      expires: new Date(0),
+      path: '/',
+      secure: true,
+      sameSite: 'none'
     });
     return res.status(200).send({
       success: true,
