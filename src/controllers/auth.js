@@ -51,12 +51,12 @@ module.exports = {
       );
 
       res.cookie("refreshToken", refreshToken, {
-        secure: false,
         sameSite: "none",
+        secure: true,
       });
       res.cookie("accessToken", accessToken, {
-        secure: false,
-        sameSite: "none"
+        sameSite: "none",
+        secure: true,
       });
 
       const newUser = await userService.update({ id: user.id, refreshToken });
@@ -76,7 +76,6 @@ module.exports = {
   async signOut(req, res) {
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
-
     return res.status(200).send({
       success: true,
       data: null,
