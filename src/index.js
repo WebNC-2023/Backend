@@ -30,11 +30,10 @@ app.use(
     credentials: true,
   })
 );
+app.set("trust proxy", 1);
 
 const swaggerSpec = swaggerJSDoc(options);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-app.set("trust proxy", 1);
 app.use(morgan("combined"));
 app.use(express.json());
 app.use(cookieParser());
