@@ -51,10 +51,13 @@ module.exports = {
       );
 
       res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        sameSite: "strict",
+        sameSite: "none",
+        secure: "auto",
       });
-      res.cookie("accessToken", accessToken);
+      res.cookie("accessToken", accessToken, {
+        sameSite: "none",
+        secure: "auto",
+      });
 
       const newUser = await userService.update({ id: user.id, refreshToken });
 
