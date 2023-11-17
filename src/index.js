@@ -10,7 +10,6 @@ const path = require("path");
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(cors());
 
 const swaggerDefinition = {
   openapi: "3.0.0",
@@ -25,12 +24,12 @@ const options = {
   apis: ["./src/routes/*.js"],
 };
 
-// app.use(
-//   cors({
-//     origin: "http://localhost:3000",
-//     credentials: true,
-//   })
-// );
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 
 const swaggerSpec = swaggerJSDoc(options);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
