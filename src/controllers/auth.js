@@ -53,12 +53,12 @@ module.exports = {
       res.cookie("refreshToken", refreshToken, {
         secure: false,
         path: "/",
-        sameSite: "strict",
+        sameSite: "none",
       });
       res.cookie("accessToken", accessToken, {
         secure: false,
         path: "/",
-        sameSite: "strict",
+        sameSite: "none"
       });
 
       const newUser = await userService.update({ id: user.id, refreshToken });
