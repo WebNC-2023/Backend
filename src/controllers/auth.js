@@ -50,14 +50,8 @@ module.exports = {
         { expiresIn: process.env.RT_EXPIRATION_TIME }
       );
 
-      res.cookie("refreshToken", refreshToken, {
-        sameSite: "none",
-        secure: true,
-      });
-      res.cookie("accessToken", accessToken, {
-        sameSite: "none",
-        secure: true,
-      });
+      res.cookie("refreshToken", refreshToken);
+      res.cookie("accessToken", accessToken);
 
       const newUser = await userService.update({ id: user.id, refreshToken });
 
