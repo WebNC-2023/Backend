@@ -51,12 +51,16 @@ module.exports = {
       );
 
       res.cookie("refreshToken", refreshToken, {
-        sameSite: "none",
-        secure: true,
+        httpOnly: true,
+        secure: false,
+        path: "/",
+        sameSite: "strict",
       });
       res.cookie("accessToken", accessToken, {
-        sameSite: "none",
-        secure: true,
+        httpOnly: true,
+        secure: false,
+        path: "/",
+        sameSite: "strict",
       });
 
       const newUser = await userService.update({ id: user.id, refreshToken });
@@ -74,14 +78,8 @@ module.exports = {
   },
 
   async signOut(req, res) {
-    res.clearCookie("accessToken", {
-      domain: "webnc-2023.vercel.app",
-      path: "/"
-    });
-    res.clearCookie("refreshToken", {
-      domain: "webnc-2023.vercel.app",
-      path: "/"
-    });
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
 
     return res.status(200).send({
       success: true,
