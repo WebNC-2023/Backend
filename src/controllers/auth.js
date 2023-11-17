@@ -52,13 +52,13 @@ module.exports = {
 
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: false,
+        secure: true,
         path: "/",
         sameSite: "strict",
       });
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: false,
+        secure: true,
         path: "/",
         sameSite: "strict",
       });
