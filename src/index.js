@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 var morgan = require("morgan");
 const route = require("./routes");
 const swaggerUi = require("swagger-ui-express");
@@ -7,7 +8,9 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
+
+app.use(cors());
 
 const swaggerDefinition = {
   openapi: "3.0.0",
