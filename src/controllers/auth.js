@@ -54,7 +54,10 @@ module.exports = {
         httpOnly: true,
         sameSite: "strict",
       });
-      res.cookie("accessToken", accessToken);
+      res.cookie("accessToken", accessToken, {
+        httpOnly: false,
+        secure: false
+      });
 
       const newUser = await userService.update({ id: user.id, refreshToken });
 
