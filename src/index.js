@@ -26,7 +26,7 @@ const options = {
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://test-do-an-1.vercel.app",
     credentials: true,
   })
 );
