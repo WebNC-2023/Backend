@@ -1,6 +1,8 @@
 const db = require("../configs/db");
 const bcrypt = require("bcrypt");
 const filesService = require("./files");
+const { v4: uuidv4 } = require("uuid");
+const { extname } = require("path");
 
 const saltRounds = 10;
 
@@ -48,14 +50,20 @@ module.exports = {
     );
 
     if (res.rows.length === 0) return false;
-    if (res.rows[0].avatar) filesService.removeFile(res.rows[0].avatar);
-
     const currentUser = res.rows[0];
+
+    if (avatar) {
+      avatar.name = currentUser.avatar
+        ? currentUser.avatar
+        : `${uuidv4()}${extname(avatar.originalname)}`;
+      await filesService.putFile(avatar);
+    }
+
     const updatedUserData = [
       firstName || currentUser.firstName,
       lastName || currentUser.lastName,
       refreshToken || currentUser.refreshToken,
-      avatar || currentUser.avatar,
+      avatar?.name || currentUser.avatar,
       id,
     ];
 
@@ -72,7 +80,7 @@ module.exports = {
     return rs.rows[0];
   },
 
-  updatePassword: async ({ id, newPassword }) => {
+  updatePassword: async ({ id, currentPassword, newPassword }) => {
     const res = await db.query(
       `
         SELECT * from "Users"
@@ -80,6 +88,9 @@ module.exports = {
       `
     );
     if (res.rows.length === 0) return false;
+    if (await bcrypt.compare(currentPassword, res.rows[0].password)) {
+      return false;
+    }
 
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
     const rs = await db.query(
