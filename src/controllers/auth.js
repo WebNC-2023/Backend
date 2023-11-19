@@ -35,7 +35,7 @@ module.exports = {
         return res.status(401).send({
           success: false,
           data: null,
-          message: "Email or Password wrong !",
+          message: "Email or Password wrong!",
         });
       }
 
@@ -76,17 +76,17 @@ module.exports = {
   },
 
   async signOut(req, res) {
-    res.cookie('accessToken', null, {
+    res.cookie("accessToken", null, {
       expires: new Date(0),
-      path: '/',
+      path: "/",
       secure: true,
-      sameSite: 'none'
+      sameSite: "none",
     });
-    res.cookie('refreshToken', null, {
+    res.cookie("refreshToken", null, {
       expires: new Date(0),
-      path: '/',
+      path: "/",
       secure: true,
-      sameSite: 'none'
+      sameSite: "none",
     });
     return res.status(200).send({
       success: true,
@@ -102,7 +102,7 @@ module.exports = {
     return res.status(200).send({
       success: true,
       data: data,
-      message: "",
+      message: null,
     });
   },
 };

@@ -1,23 +1,11 @@
 const multer = require("multer");
 const path = require("path");
-const fs = require("fs");
 
 const SupportedFileType = {
   IMAGE: /jpg|jpeg|png|gif|svg/,
 };
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    fs.mkdirSync(path.join(__dirname, "../../uploads"), { recursive: true });
-    cb(null, path.join(__dirname, "../../uploads"));
-  },
-  filename: function (req, file, cb) {
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-    );
-  },
-});
+const storage = multer.memoryStorage();
 
 function checkFileType(file, cb) {
   const isImage = SupportedFileType.IMAGE.test(

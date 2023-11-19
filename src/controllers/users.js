@@ -1,11 +1,11 @@
-const userService = require("../services/users");
+const usersService = require("../services/users");
 
 module.exports = {
   async updateProfile(req, res) {
     try {
-      const user = await userService.update({
+      const user = await usersService.update({
         ...req.body,
-        avatar: req?.file?.filename ? req.file.filename : null,
+        avatar: req?.file || null,
         id: req.user.userId,
       });
 
@@ -24,10 +24,17 @@ module.exports = {
 
   async changePassword(req, res) {
     try {
-      const user = await userService.updatePassword({
+      const user = await usersService.updatePassword({
         ...req.body,
         id: req.user.userId,
       });
+
+      if (!user)
+        return res.status(401).send({
+          success: false,
+          data: null,
+          message: "Current password is incorrect",
+        });
 
       const { password, ...data } = user;
 
