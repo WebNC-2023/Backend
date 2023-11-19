@@ -88,9 +88,12 @@ module.exports = {
       `
     );
     if (res.rows.length === 0) return false;
-    if (await bcrypt.compare(currentPassword, res.rows[0].password)) {
-      return false;
-    }
+
+    const checkCorrectPassword = await bcrypt.compare(
+      currentPassword,
+      res.rows[0].password
+    );
+    if (!checkCorrectPassword) return false;
 
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
     const rs = await db.query(
