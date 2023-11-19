@@ -9,5 +9,9 @@ module.exports = {
     validateRequest,
   ],
 
-  changePassword: [body("newPassword").isLength({ min: 8 }), validateRequest],
+  changePassword: [
+    body("currentPassword").isLength({ min: 8 }),
+    body("newPassword").isLength({ min: 8 }),
+    validateRequest,
+  ],
 };

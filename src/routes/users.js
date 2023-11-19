@@ -71,6 +71,9 @@ router.patch(
  *           schema:
  *             type: object
  *             properties:
+ *               currentPassword:
+ *                 type: string
+ *                 example: currentPassword
  *               newPassword:
  *                 type: string
  *                 example: newPassword
