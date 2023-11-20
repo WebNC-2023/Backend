@@ -10,7 +10,6 @@ const path = require("path");
 const app = express();
 const port = process.env.PORT || 5000;
 
-
 const swaggerDefinition = {
   openapi: "3.0.0",
   info: {
@@ -26,7 +25,7 @@ const options = {
 
 app.use(
   cors({
-    origin: "https://webnc-2023-midterm.vercel.app",
+    origin: ["https://webnc-2023-midterm.vercel.app", "http://localhost:3000"],
     credentials: true,
   })
 );
