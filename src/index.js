@@ -26,7 +26,7 @@ const options = {
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://webnc-2023-midterm.vercel.app",
     credentials: true,
   })
 );
