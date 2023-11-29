@@ -5,11 +5,9 @@ const route = require("./routes");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJSDoc = require("swagger-jsdoc");
 const cookieParser = require("cookie-parser");
-const path = require("path");
 
 const app = express();
 const port = process.env.PORT || 5000;
-
 
 const swaggerDefinition = {
   openapi: "3.0.0",
@@ -26,7 +24,11 @@ const options = {
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: [
+      "https://webnc-2023-midterm.vercel.app",
+      "http://localhost:3000",
+      "http://localhost:5000",
+    ],
     credentials: true,
   })
 );
@@ -37,7 +39,13 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(morgan("combined"));
 app.use(express.json());
 app.use(cookieParser());
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+app.use(
+  require("express-session")({
+    secret: "session-secret",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
 
 route(app);
 
