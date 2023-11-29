@@ -11,12 +11,6 @@
     "sourceType": "module"
   },
   "rules": {
-    "max-len": [
-      "error",
-      80,
-      { "ignoreComments": true },
-      { "ignoreTemplateLiterals": true }
-    ],
-    "no-unused-vars": ["error", { "ignoreRestSiblings": true }]
+    "no-unused-vars": ["warning"]
   }
 }

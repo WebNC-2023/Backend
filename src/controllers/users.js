@@ -6,7 +6,7 @@ module.exports = {
       const user = await usersService.update({
         ...req.body,
         avatar: req?.file || null,
-        id: req.user.userId,
+        id: req.user.sub,
       });
 
       const { password, ...data } = user;
