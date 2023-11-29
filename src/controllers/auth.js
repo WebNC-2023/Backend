@@ -92,7 +92,7 @@ module.exports = {
       path: "/",
     });
 
-    return res.redirect(process.env.CLIENT_URL);
+    return res.redirect(302, process.env.CLIENT_URL);
   },
 
   async signOut(req, res) {
