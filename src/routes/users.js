@@ -1,11 +1,11 @@
 const app = require("express");
-const authenticateToken = require("../middlewares/authenticateToken");
+const requireAuth = require("../middlewares/requireAuth");
 const usersController = require("../controllers/users");
 const usersValidator = require("../middlewares/validators/users");
 const upload = require("../configs/upload");
 
 const router = app.Router();
-router.use(authenticateToken);
+router.use(requireAuth);
 
 /**
  * @swagger
