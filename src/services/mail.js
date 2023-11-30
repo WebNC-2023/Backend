@@ -19,11 +19,11 @@ module.exports = {
       html: emailActiveAccount(user),
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log(error);
-      }
-    });
+    try {
+      await transporter.sendMail(mailOptions);
+    } catch (error) {
+      console.error(error);
+    }
   },
 
   sendResetPassword: async (user) => {
@@ -34,10 +34,10 @@ module.exports = {
       html: emailResetPassword(user),
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log(error);
-      }
-    });
+    try {
+      await transporter.sendMail(mailOptions);
+    } catch (error) {
+      console.error(error);
+    }
   },
 };
