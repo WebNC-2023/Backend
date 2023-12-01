@@ -26,7 +26,7 @@ module.exports = {
     try {
       const user = await usersService.updatePassword({
         ...req.body,
-        id: req.user.userId,
+        id: req.user.sub,
       });
 
       if (!user)
