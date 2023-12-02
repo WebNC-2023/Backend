@@ -199,6 +199,19 @@ module.exports = {
 
     return rs.rows.length !== 0 ? rs.rows[0] : null;
   },
+  checkCode: async (activeCode) => {
+    const res = await db.query(
+      `
+        SELECT * FROM "Users"
+        WHERE "activeCode" = $1
+        RETURNING *
+      `,
+      [activeCode]
+    );
+    if (res.rows.length === 0) return false;
+
+    return true;
+  },
 
   activeAccount: async (activeCode) => {
     const res = await db.query(

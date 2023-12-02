@@ -234,6 +234,13 @@ router.get(
  *                 message:
  *                   type: string
  */
+
+router.get(
+  "/active-account/:activeCode",
+  authValidator.activeAccount,
+  authController.checkActiveCode
+);
+
 router.post(
   "/active-account/:activeCode",
   authValidator.activeAccount,

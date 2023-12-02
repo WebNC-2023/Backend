@@ -166,6 +166,24 @@ module.exports = {
     });
   },
 
+  async checkActiveCode(req, res) {
+    const user = await usersService.checkCode(req.params.activeCode);
+
+    if (!user) {
+      return res.status(400).send({
+        success: false,
+        data: user,
+        message: "Invalid active code!",
+      });
+    }
+
+    return res.status(200).send({
+      success: true,
+      data: user,
+      message: "active code true!",
+    });
+  },
+
   async activeAccount(req, res) {
     const user = await usersService.activeAccount(req.params.activeCode);
 
