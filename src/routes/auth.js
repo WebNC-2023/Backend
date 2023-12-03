@@ -156,7 +156,7 @@ router.get("/me", requireAuth, authController.getMe);
  *                 message:
  *                   type: string
  */
-router.get("/refresh", requireAuth, authController.refresh);
+router.get("/refresh", authController.refresh);
 
 /**
  * @swagger
