@@ -148,7 +148,11 @@ module.exports = {
         process.env.AT_SECRET_KEY,
         { expiresIn: process.env.AT_EXPIRATION_TIME }
       );
-      res.cookie("accessToken", accessToken);
+      res.cookie("accessToken", accessToken, {
+        secure: true,
+        sameSite: "none",
+        path: "/",
+      });
 
       const { password, ...data } = user;
 
