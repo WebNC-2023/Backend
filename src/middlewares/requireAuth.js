@@ -20,11 +20,22 @@ passport.use(
     if (user) {
       return done(null, { sub: user.id, email: user.email });
     } else {
-      return done(null, false, {message: "Token is expired"});
+      return done(null, false);
     }
   })
 );
 
-const requireAuth = passport.authenticate("jwt", { session: false });
+const requireAuth = (req, res, next) => {
+  passport.authenticate("jwt", { session: false }, (err, user) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.status(419).json({ message: "Unauthorized" });
+    }
+    req.user = user;
+    next();
+  })(req, res, next);
+};
 
 module.exports = requireAuth;
