@@ -20,7 +20,7 @@ passport.use(
     if (user) {
       return done(null, { sub: user.id, email: user.email });
     } else {
-      return done(null, false);
+      return done(null, false, {message: "Unauthorized", status: 419});
     }
   })
 );
