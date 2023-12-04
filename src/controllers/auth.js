@@ -148,6 +148,7 @@ module.exports = {
         process.env.AT_SECRET_KEY,
         { expiresIn: process.env.AT_EXPIRATION_TIME }
       );
+
       res.cookie("accessToken", accessToken, {
         httpOnly: false,
         sameSite: "none",
@@ -163,7 +164,7 @@ module.exports = {
       });
     }
 
-    return res.status(401).send({
+    return res.status(400).send({
       success: false,
       data: null,
       message: "Unauthorized",
