@@ -10,7 +10,6 @@ module.exports = {
 
       return res.status(rs.code).send({
         success: rs.code === 201,
-        data: null,
         message: rs.message,
       });
     } catch (error) {
@@ -26,7 +25,6 @@ module.exports = {
       if (rs.code !== 200) {
         return res.status(rs.code).send({
           success: false,
-          data: null,
           message: rs.message,
         });
       }
@@ -110,7 +108,6 @@ module.exports = {
     });
     return res.status(200).send({
       success: true,
-      data: null,
       message: "Sign out successfully",
     });
   },
@@ -136,7 +133,6 @@ module.exports = {
       if (!decoded) {
         return res.status(401).send({
           success: false,
-          data: null,
           message: "Unauthorized",
         });
       }
@@ -161,7 +157,6 @@ module.exports = {
 
     return res.status(401).send({
       success: false,
-      data: null,
       message: "Unauthorized",
     });
   },
@@ -172,7 +167,6 @@ module.exports = {
     if (!user) {
       return res.status(400).send({
         success: false,
-        data: null,
         message: "Invalid active code!",
       });
     }
@@ -192,13 +186,11 @@ module.exports = {
     if (!rs)
       return res.status(404).send({
         success: false,
-        data: null,
         message: "Email not found!",
       });
 
     return res.status(200).send({
       success: true,
-      data: null,
       message: "We have sent an email to reset your password!",
     });
   },
@@ -211,13 +203,11 @@ module.exports = {
     if (!user)
       return res.status(404).send({
         success: false,
-        data: null,
         message: "Reset password code is invalid!",
       });
 
     return res.status(200).send({
       success: true,
-      data: null,
       message: "Reset password code is valid!",
     });
   },
@@ -228,7 +218,6 @@ module.exports = {
     if (!user)
       return res.status(400).send({
         success: false,
-        data: null,
         message: "Reset password fail! Reset password code is invalid!",
       });
 
@@ -239,7 +228,6 @@ module.exports = {
 
     return res.status(200).send({
       success: true,
-      data: null,
       message: "Reset password successfully!",
     });
   },
