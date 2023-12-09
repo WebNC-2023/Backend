@@ -28,3 +28,5 @@ passport.use(
 const requireAuth = passport.authenticate("jwt", { session: false });
 
 module.exports = requireAuth;
+
+

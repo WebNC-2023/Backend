@@ -1,26 +1,22 @@
 const app = require("express");
-const router = app.Router();
-const authController = require("../controllers/auth");
-const authValidator = require("../middlewares/validators/auth");
 const requireAuth = require("../middlewares/requireAuth");
-const {
-  googleAuth,
-  googleAuthCallback,
-  facebookAuth,
-  facebookAuthCallback,
-} = require("../middlewares/passportStrategy");
+const classesController = require("../controllers/classes");
+const classesValidator = require("../middlewares/validators/classes");
+const upload = require("../configs/upload");
+
+const router = app.Router();
 
 /**
  * @swagger
  * tags:
- *   name: Auth
+ *   name: Classes
  */
 
 /**
  * @swagger
- * /auth/sign-up:
+ * /classes:
  *   post:
- *     tags: [Auth]
+ *     tags: [Classes]
  *     requestBody:
  *       required: true
  *       content:
@@ -28,18 +24,15 @@ const {
  *           schema:
  *             type: object
  *             properties:
- *               firstName:
+ *               name:
  *                 type: string
- *                 example: Leanne
- *               lastName:
+ *                 required: true
+ *               part:
  *                 type: string
- *                 example: Graham
- *               email:
+ *               topic:
  *                 type: string
- *                 example: LeanneGraham@gmail.com
- *               password:
+ *               room:
  *                 type: string
- *                 example: password
  *     responses:
  *       '201':
  *         description: A successful response
@@ -55,70 +48,13 @@ const {
  *                 message:
  *                   type: string
  */
-router.post("/sign-up", authValidator.signUp, authController.signUp);
+router.post("", requireAuth, classesValidator.create, classesController.create);
 
 /**
  * @swagger
- * /auth/sign-in:
- *   post:
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 example: LeanneGraham@gmail.com
- *               password:
- *                 type: string
- *                 example: password
- *     responses:
- *       '200':
- *         description: A successful response
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   type: object
- *                 message:
- *                   type: string
- */
-router.post("/sign-in", authValidator.signIn, authController.signIn);
-
-/**
- * @swagger
- * /auth/sign-out:
- *   post:
- *     tags: [Auth]
- *     responses:
- *       '200':
- *         description: A successful response
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   type: object
- *                 message:
- *                   type: string
- */
-router.post("/sign-out", authController.signOut);
-
-/**
- * @swagger
- * /auth/me:
+ * /classes:
  *   get:
- *     tags: [Auth]
+ *     tags: [Classes]
  *     responses:
  *       '200':
  *         description: A successful response
@@ -130,92 +66,22 @@ router.post("/sign-out", authController.signOut);
  *                 success:
  *                   type: boolean
  *                 data:
- *                   type: object
+ *                   type: array
+ *                   items:
+ *                     type: object
  *                 message:
  *                   type: string
  */
-router.get("/me", requireAuth, authController.getMe);
+router.get("", requireAuth, classesController.getAll);
 
 /**
  * @swagger
- * /auth/refresh:
+ * /classes/{id}:
  *   get:
- *     tags: [Auth]
- *     responses:
- *       '200':
- *         description: A successful response
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   type: object
- *                 message:
- *                   type: string
- */
-router.get("/refresh", authController.refresh);
-
-/**
- * @swagger
- * /auth/google:
- *   get:
- *     tags: [Auth]
- *     responses:
- *       '200':
- *         description: A successful response
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   type: object
- *                 message:
- *                   type: string
- */
-router.get("/google", googleAuth);
-router.get("/google/callback", googleAuthCallback, authController.ssoSignIn);
-
-/**
- * @swagger
- * /auth/facebook:
- *   get:
- *     tags: [Auth]
- *     responses:
- *       '200':
- *         description: A successful response
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   type: object
- *                 message:
- *                   type: string
- */
-router.get("/facebook", facebookAuth);
-router.get(
-  "/facebook/callback",
-  facebookAuthCallback,
-  authController.ssoSignIn
-);
-
-/**
- * @swagger
- * /auth/active-account/{activeCode}:
- *   post:
- *     tags: [Auth]
+ *     tags: [Classes]
  *     parameters:
  *       - in: path
- *         name: activeCode
+ *         name: id
  *         required: true
  *         schema:
  *           type: string
@@ -234,24 +100,249 @@ router.get(
  *                 message:
  *                   type: string
  */
-
 router.get(
-  "/active-account/:activeCode",
-  authValidator.activeAccount,
-  authController.checkActiveCode
-);
-
-router.post(
-  "/active-account/:activeCode",
-  authValidator.activeAccount,
-  authController.activeAccount
+  "/:id",
+  requireAuth,
+  classesValidator.pramId,
+  classesController.getById
 );
 
 /**
  * @swagger
- * /auth/forgot-password:
+ * /classes/{id}/find:
+ *   get:
+ *     description: 'Find class that not attend'
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: A successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                 message:
+ *                   type: string
+ */
+router.get("/:id/find", classesValidator.pramId, classesController.findById);
+
+/**
+ * @swagger
+ * /classes/{id}:
+ *   patch:
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     consumes:
+ *       - multipart/form-data
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               part:
+ *                 type: string
+ *               topic:
+ *                 type: string
+ *               room:
+ *                 type: string
+ *               avatar:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       '200':
+ *         description: A successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                 message:
+ *                   type: string
+ */
+router.patch(
+  "/:id",
+  requireAuth,
+  classesValidator.update,
+  upload.single("avatar"),
+  classesController.update
+);
+
+/**
+ * @swagger
+ * /classes/{id}:
+ *   delete:
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: A successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                 message:
+ *                   type: string
+ */
+router.delete(
+  "/:id",
+  requireAuth,
+  classesValidator.pramId,
+  classesController.delete
+);
+
+/**
+ * @swagger
+ * /classes/{id}/attend:
  *   post:
- *     tags: [Auth]
+ *     tags: [Classes]
+ *     description: Only student
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '201':
+ *         description: A successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                 message:
+ *                   type: string
+ */
+router.post(
+  "/:id/attend",
+  requireAuth,
+  classesValidator.pramId,
+  classesController.attend
+);
+
+/**
+ * @swagger
+ * /classes/{id}/leave:
+ *   post:
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: A successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                 message:
+ *                   type: string
+ */
+router.post(
+  "/:id/leave",
+  requireAuth,
+  classesValidator.pramId,
+  classesController.leave
+);
+
+/**
+ * @swagger
+ * /classes/{id}/remove-member:
+ *   post:
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 example: userId want to remove
+ *     responses:
+ *       '200':
+ *         description: A successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                 message:
+ *                   type: string
+ */
+router.post(
+  "/:id/remove-member",
+  requireAuth,
+  classesValidator.removeMember,
+  classesController.removeMember
+);
+
+/**
+ * @swagger
+ * /classes/{id}/invite:
+ *   post:
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -261,7 +352,8 @@ router.post(
  *             properties:
  *               email:
  *                 type: string
- *                 example: LeanneGraham@gmail.com
+ *               role:
+ *                 enum: [teacher, student]
  *     responses:
  *       '200':
  *         description: A successful response
@@ -278,28 +370,25 @@ router.post(
  *                   type: string
  */
 router.post(
-  "/forgot-password",
-  authValidator.forgotPassword,
-  authController.sendMailResetPassword
+  "/:id/invite",
+  requireAuth,
+  classesValidator.invite,
+  classesController.invite
 );
 
 /**
  * @swagger
- * /auth/validate-reset-password-code:
+ * /classes/{id}/accept:
  *   post:
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               resetPasswordCode:
- *                 type: string
- *                 example: 2befdf042e98e6b5
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
  *     responses:
- *       '200':
+ *       '201':
  *         description: A successful response
  *         content:
  *           application/json:
@@ -314,48 +403,10 @@ router.post(
  *                   type: string
  */
 router.post(
-  "/validate-reset-password-code",
-  authValidator.validateResetPasswordCode,
-  authController.validateResetPasswordCode
-);
-
-/**
- * @swagger
- * /auth/reset-password:
- *   post:
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               resetPasswordCode:
- *                 type: string
- *                 example: 2befdf042e98e6b5
- *               newPassword:
- *                 type: string
- *                 example: 12345678
- *     responses:
- *       '200':
- *         description: A successful response
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   type: object
- *                 message:
- *                   type: string
- */
-router.post(
-  "/reset-password",
-  authValidator.resetPassword,
-  authController.resetPassword
+  "/:id/accept",
+  requireAuth,
+  classesValidator.pramId,
+  classesController.accept
 );
 
 module.exports = router;

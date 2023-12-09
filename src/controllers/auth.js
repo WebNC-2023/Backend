@@ -10,7 +10,6 @@ module.exports = {
 
       return res.status(rs.code).send({
         success: rs.code === 201,
-        data: null,
         message: rs.message,
       });
     } catch (error) {
@@ -26,7 +25,6 @@ module.exports = {
       if (rs.code !== 200) {
         return res.status(rs.code).send({
           success: false,
-          data: null,
           message: rs.message,
         });
       }
@@ -45,14 +43,14 @@ module.exports = {
       );
 
       res.cookie("refreshToken", refreshToken, {
-        secure: true,
+        httpOnly: false,
         sameSite: "none",
-        path: "/",
+        secure: true,
       });
       res.cookie("accessToken", accessToken, {
-        secure: true,
+        httpOnly: false,
         sameSite: "none",
-        path: "/",
+        secure: true,
       });
 
       const { password, ...data } = user;
@@ -82,35 +80,34 @@ module.exports = {
     );
 
     res.cookie("refreshToken", refreshToken, {
-      secure: true,
+      httpOnly: false,
       sameSite: "none",
-      path: "/",
+      secure: true,
     });
     res.cookie("accessToken", accessToken, {
-      secure: true,
+      httpOnly: false,
       sameSite: "none",
-      path: "/",
+      secure: true,
     });
 
-    return res.redirect(process.env.CLIENT_URL);
+    return res.redirect(302, process.env.CLIENT_URL);
   },
 
   async signOut(req, res) {
     res.cookie("accessToken", null, {
       expires: new Date(0),
-      path: "/",
-      secure: true,
+      httpOnly: false,
       sameSite: "none",
+      secure: true,
     });
     res.cookie("refreshToken", null, {
       expires: new Date(0),
-      path: "/",
-      secure: true,
+      httpOnly: false,
       sameSite: "none",
+      secure: true,
     });
     return res.status(200).send({
       success: true,
-      data: null,
       message: "Sign out successfully",
     });
   },
@@ -136,7 +133,6 @@ module.exports = {
       if (!decoded) {
         return res.status(401).send({
           success: false,
-          data: null,
           message: "Unauthorized",
         });
       }
@@ -148,7 +144,12 @@ module.exports = {
         process.env.AT_SECRET_KEY,
         { expiresIn: process.env.AT_EXPIRATION_TIME }
       );
-      res.cookie("accessToken", accessToken);
+
+      res.cookie("accessToken", accessToken, {
+        httpOnly: false,
+        sameSite: "none",
+        secure: true,
+      });
 
       const { password, ...data } = user;
 
@@ -161,7 +162,6 @@ module.exports = {
 
     return res.status(401).send({
       success: false,
-      data: null,
       message: "Unauthorized",
     });
   },
@@ -190,7 +190,6 @@ module.exports = {
     if (!user) {
       return res.status(400).send({
         success: false,
-        data: null,
         message: "Invalid active code!",
       });
     }
@@ -210,13 +209,11 @@ module.exports = {
     if (!rs)
       return res.status(404).send({
         success: false,
-        data: null,
         message: "Email not found!",
       });
 
     return res.status(200).send({
       success: true,
-      data: null,
       message: "We have sent an email to reset your password!",
     });
   },
@@ -229,13 +226,11 @@ module.exports = {
     if (!user)
       return res.status(404).send({
         success: false,
-        data: null,
         message: "Reset password code is invalid!",
       });
 
     return res.status(200).send({
       success: true,
-      data: null,
       message: "Reset password code is valid!",
     });
   },
@@ -246,7 +241,6 @@ module.exports = {
     if (!user)
       return res.status(400).send({
         success: false,
-        data: null,
         message: "Reset password fail! Reset password code is invalid!",
       });
 
@@ -257,7 +251,6 @@ module.exports = {
 
     return res.status(200).send({
       success: true,
-      data: null,
       message: "Reset password successfully!",
     });
   },
