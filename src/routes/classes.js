@@ -1,12 +1,10 @@
 const app = require("express");
 const requireAuth = require("../middlewares/requireAuth");
-const usersController = require("../controllers/users");
 const classesController = require("../controllers/classes");
 const classesValidator = require("../middlewares/validators/classes");
 const upload = require("../configs/upload");
 
 const router = app.Router();
-router.use(requireAuth);
 
 /**
  * @swagger
@@ -50,7 +48,7 @@ router.use(requireAuth);
  *                 message:
  *                   type: string
  */
-router.post("", classesValidator.create, classesController.create);
+router.post("", requireAuth, classesValidator.create, classesController.create);
 
 /**
  * @swagger
@@ -69,10 +67,12 @@ router.post("", classesValidator.create, classesController.create);
  *                   type: boolean
  *                 data:
  *                   type: array
+ *                   items:
+ *                     type: object
  *                 message:
  *                   type: string
  */
-router.get("", classesController.getAll);
+router.get("", requireAuth, classesController.getAll);
 
 /**
  * @swagger
@@ -96,11 +96,45 @@ router.get("", classesController.getAll);
  *                 success:
  *                   type: boolean
  *                 data:
- *                   type: array
+ *                   type: object
  *                 message:
  *                   type: string
  */
-router.get("/:id", classesController.getById);
+router.get(
+  "/:id",
+  requireAuth,
+  classesValidator.pramId,
+  classesController.getById
+);
+
+/**
+ * @swagger
+ * /classes/{id}/find:
+ *   get:
+ *     description: 'Find class that not attend'
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: A successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                 message:
+ *                   type: string
+ */
+router.get("/:id/find", classesValidator.pramId, classesController.findById);
 
 /**
  * @swagger
@@ -148,7 +182,13 @@ router.get("/:id", classesController.getById);
  *                 message:
  *                   type: string
  */
-router.patch("/:id", upload.single("avatar"), classesController.update);
+router.patch(
+  "/:id",
+  requireAuth,
+  classesValidator.update,
+  upload.single("avatar"),
+  classesController.update
+);
 
 /**
  * @swagger
@@ -176,28 +216,25 @@ router.patch("/:id", upload.single("avatar"), classesController.update);
  *                 message:
  *                   type: string
  */
-router.delete("/:id", classesController.delete);
+router.delete(
+  "/:id",
+  requireAuth,
+  classesValidator.pramId,
+  classesController.delete
+);
 
 /**
  * @swagger
  * /classes/{id}/attend:
  *   post:
  *     tags: [Classes]
+ *     description: Only student
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               inviteTeacherCode:
- *                 type: string
- *                 example: (use to attend as teacher, remove if as student)
  *     responses:
  *       '201':
  *         description: A successful response
@@ -213,7 +250,12 @@ router.delete("/:id", classesController.delete);
  *                 message:
  *                   type: string
  */
-router.post("/:id/attend", classesController.attend);
+router.post(
+  "/:id/attend",
+  requireAuth,
+  classesValidator.pramId,
+  classesController.attend
+);
 
 /**
  * @swagger
@@ -241,7 +283,12 @@ router.post("/:id/attend", classesController.attend);
  *                 message:
  *                   type: string
  */
-router.post("/:id/leave", classesController.leave);
+router.post(
+  "/:id/leave",
+  requireAuth,
+  classesValidator.pramId,
+  classesController.leave
+);
 
 /**
  * @swagger
@@ -278,10 +325,88 @@ router.post("/:id/leave", classesController.leave);
  *                 message:
  *                   type: string
  */
-router.post("/:id/remove-member", classesController.removeMember);
+router.post(
+  "/:id/remove-member",
+  requireAuth,
+  classesValidator.removeMember,
+  classesController.removeMember
+);
 
-router.post("/:id/invite-student", classesController.leave);
+/**
+ * @swagger
+ * /classes/{id}/invite:
+ *   post:
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               role:
+ *                 enum: [teacher, student]
+ *     responses:
+ *       '200':
+ *         description: A successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                 message:
+ *                   type: string
+ */
+router.post(
+  "/:id/invite",
+  requireAuth,
+  classesValidator.invite,
+  classesController.invite
+);
 
-router.post("/:id/invite-teacher", classesController.leave);
+/**
+ * @swagger
+ * /classes/{id}/accept:
+ *   post:
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '201':
+ *         description: A successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                 message:
+ *                   type: string
+ */
+router.post(
+  "/:id/accept",
+  requireAuth,
+  classesValidator.pramId,
+  classesController.accept
+);
 
 module.exports = router;
