@@ -32,7 +32,6 @@ module.exports = {
       if (!user)
         return res.status(401).send({
           success: false,
-          data: null,
           message: "Current password is incorrect",
         });
 

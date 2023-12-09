@@ -1,7 +1,7 @@
+const { v4: uuidv4 } = require("uuid");
 const db = require("../configs/db");
 const bcrypt = require("bcrypt");
 const filesService = require("./files");
-const { v4: uuidv4 } = require("uuid");
 const { extname } = require("path");
 const { randomString } = require("../utils");
 const mailService = require("./mail");
