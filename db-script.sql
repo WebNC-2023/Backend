@@ -19,7 +19,6 @@ CREATE TABLE "Classes" (
   "topic" varchar(100),
   "room" varchar(100),
   "avatar" varchar(255),
-  "inviteTeacherCode" varchar(255),
   "ownerId" INT NOT NULL REFERENCES "Users"(id) ON DELETE CASCADE,
   "dateCreated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -33,11 +32,20 @@ CREATE TABLE "Attendance" (
   UNIQUE ("userId", "classId")
 );
 
+DROP TABLE IF EXISTS "AttendanceInvite";
+CREATE TABLE "AttendanceInvite" (
+  "id" SERIAL PRIMARY KEY NOT NULL,
+  "email" varchar(100) NOT NULL,
+  "classId" varchar(10) NOT NULL REFERENCES "Classes"(id) ON DELETE CASCADE,
+  "role" VARCHAR(10) CHECK (role IN ('teacher', 'student')) NOT NULL,
+  UNIQUE ("email", "classId")
+);
+
 INSERT INTO "Users"("firstName", "lastName", "email") 
 VALUES ('Tan', 'Tân', 'duytan030522@gmail.com');
 
 INSERT INTO "Classes"(id, "name", "ownerId") 
-VALUES ('avc', 'new Class', 1);
+VALUES ('avc1ccacac', 'new Class', 1);
 
 INSERT INTO "Attendance"("userId", "classId", "role") 
 VALUES (1, 'avc', 'teacher');

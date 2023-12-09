@@ -3,15 +3,16 @@ const { extname } = require("path");
 const filesService = require("./files");
 const { randomString } = require("../utils");
 const db = require("../configs/db");
+const mailService = require("./mail");
 
 module.exports = {
   create: async ({ name, part, topic, room, ownerId }) => {
     const rs = await db.query(
       `
-        INSERT INTO "Classes"(id, "name", "part", "topic", "room", "inviteTeacherCode","ownerId") 
-        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *
+        INSERT INTO "Classes"(id, "name", "part", "topic", "room", "ownerId") 
+        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
       `,
-      [randomString(10), name, part, topic, room, randomString(10), ownerId]
+      [randomString(10), name, part, topic, room, ownerId]
     );
 
     return rs.rows[0];
@@ -63,8 +64,27 @@ module.exports = {
     return rs.rows.length !== 0 ? rs.rows[0] : null;
   },
 
-  getPeople: async (classId) => {
+  findById: async (id) => {
     const rs = await db.query(
+      `
+        SELECT
+          c.id,
+          c."name",
+          c."part",
+          c."topic",
+          c."room",
+          c."dateCreated"
+        FROM "Classes" c
+        WHERE c.id=$1;
+      `,
+      [id]
+    );
+
+    return rs.rows.length !== 0 ? rs.rows[0] : null;
+  },
+
+  getPeople: async (classId) => {
+    const rsAttended = await db.query(
       `
         SELECT 
           u."id",
@@ -80,7 +100,19 @@ module.exports = {
       [classId]
     );
 
-    return rs.rows;
+    const rsPending = await db.query(
+      `
+        SELECT 
+          ai."email",
+          ai."role",
+          FALSE AS "isActive"
+        FROM "AttendanceInvite" ai
+        WHERE ai."classId"=$1;
+      `,
+      [classId]
+    );
+
+    return [...rsAttended.rows, ...rsPending.rows];
   },
 
   update: async ({ id, name, part, topic, room, avatar }) => {
@@ -146,6 +178,19 @@ module.exports = {
     return rs.rows[0];
   },
 
+  removeInviteAttend: async (email, classId) => {
+    const rs = await db.query(
+      `
+        DELETE FROM "AttendanceInvite" ai
+        WHERE ai."email"=$1 AND ai."classId"=$2
+        RETURNING *;
+      `,
+      [email, classId]
+    );
+
+    return rs.rows[0];
+  },
+
   getRoleInClass: async (userId, classId) => {
     const rs = await db.query(
       `
@@ -156,6 +201,18 @@ module.exports = {
     );
 
     return rs.rows.length !== 0 ? rs.rows[0].role : null;
+  },
+
+  getInviteExist: async (email, classId) => {
+    const rs = await db.query(
+      `
+        SELECT * FROM "AttendanceInvite" ai
+        WHERE ai."classId" = $1 AND ai."email" = $2
+      `,
+      [classId, email]
+    );
+
+    return rs.rows.length !== 0 ? rs.rows[0] : null;
   },
 
   getClass: async (id) => {
@@ -177,6 +234,22 @@ module.exports = {
         WHERE a."classId" = $1 AND a."userId" = $2
       `,
       [classId, userId]
+    );
+  },
+
+  invite: async (emailReceipt, sender, currentClass, role) => {
+    await db.query(
+      `
+        INSERT INTO "AttendanceInvite"("email", "classId", "role") 
+        VALUES ($1, $2, $3);
+      `,
+      [emailReceipt, currentClass.id, role]
+    );
+    await mailService.sendInviteStudent(
+      emailReceipt,
+      sender,
+      currentClass,
+      role
     );
   },
 };
