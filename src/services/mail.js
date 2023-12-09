@@ -43,7 +43,6 @@ module.exports = {
   },
 
   sendInviteStudent: async (emailReceipt, sender, currentClass, role) => {
-    console.log(emailReceipt, sender, currentClass);
     const mailOptions = {
       from: "learners.hcmus@gmail.com",
       to: emailReceipt,

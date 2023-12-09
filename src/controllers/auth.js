@@ -43,14 +43,14 @@ module.exports = {
       );
 
       res.cookie("refreshToken", refreshToken, {
-        secure: true,
+        httpOnly: false,
         sameSite: "none",
-        path: "/",
+        secure: true,
       });
       res.cookie("accessToken", accessToken, {
-        secure: true,
+        httpOnly: false,
         sameSite: "none",
-        path: "/",
+        secure: true,
       });
 
       const { password, ...data } = user;
@@ -80,31 +80,31 @@ module.exports = {
     );
 
     res.cookie("refreshToken", refreshToken, {
-      secure: true,
+      httpOnly: false,
       sameSite: "none",
-      path: "/",
+      secure: true,
     });
     res.cookie("accessToken", accessToken, {
-      secure: true,
+      httpOnly: false,
       sameSite: "none",
-      path: "/",
+      secure: true,
     });
 
-    return res.redirect(process.env.CLIENT_URL);
+    return res.redirect(302, process.env.CLIENT_URL);
   },
 
   async signOut(req, res) {
     res.cookie("accessToken", null, {
       expires: new Date(0),
-      path: "/",
-      secure: true,
+      httpOnly: false,
       sameSite: "none",
+      secure: true,
     });
     res.cookie("refreshToken", null, {
       expires: new Date(0),
-      path: "/",
-      secure: true,
+      httpOnly: false,
       sameSite: "none",
+      secure: true,
     });
     return res.status(200).send({
       success: true,
@@ -144,7 +144,12 @@ module.exports = {
         process.env.AT_SECRET_KEY,
         { expiresIn: process.env.AT_EXPIRATION_TIME }
       );
-      res.cookie("accessToken", accessToken);
+
+      res.cookie("accessToken", accessToken, {
+        httpOnly: false,
+        sameSite: "none",
+        secure: true,
+      });
 
       const { password, ...data } = user;
 
