@@ -3,19 +3,19 @@ const validateRequest = require("./validatorRequest.js");
 
 module.exports = {
   create: [
-    body("name").isLength({ min: 1 }),
-    body("part").optional().isLength({ min: 1 }),
-    body("topic").optional().isLength({ min: 1 }),
-    body("room").optional().isLength({ min: 1 }),
+    body("name").isString().isLength({ min: 1 }),
+    body("part").optional().isString(),
+    body("topic").optional().isString(),
+    body("room").optional().isString(),
     validateRequest,
   ],
 
   update: [
     param("id").isLength({ min: 1 }),
-    body("name").optional().isLength({ min: 1 }),
-    body("part").optional().isLength({ min: 1 }),
-    body("topic").optional().isLength({ min: 1 }),
-    body("room").optional().isLength({ min: 1 }),
+    body("name").optional().isString().isLength({ min: 1 }),
+    body("part").optional().isString(),
+    body("topic").optional().isString(),
+    body("room").optional().isString(),
     body("avatar").optional(),
     validateRequest,
   ],
