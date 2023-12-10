@@ -42,21 +42,10 @@ module.exports = {
         { expiresIn: process.env.RT_EXPIRATION_TIME }
       );
 
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: false,
-        sameSite: "none",
-        secure: true,
-      });
-      res.cookie("accessToken", accessToken, {
-        httpOnly: false,
-        sameSite: "none",
-        secure: true,
-      });
-
       const { password, ...data } = user;
       return res.status(200).send({
         success: true,
-        data: data,
+        data: { ...data, accessToken: accessToken, refreshToken },
         message: "Sign in successfully",
       });
     } catch (error) {
@@ -79,37 +68,10 @@ module.exports = {
       { expiresIn: process.env.RT_EXPIRATION_TIME }
     );
 
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: false,
-      sameSite: "none",
-      secure: true,
-    });
-    res.cookie("accessToken", accessToken, {
-      httpOnly: false,
-      sameSite: "none",
-      secure: true,
-    });
-
-    return res.redirect(302, process.env.CLIENT_URL);
-  },
-
-  async signOut(req, res) {
-    res.cookie("accessToken", null, {
-      expires: new Date(0),
-      httpOnly: false,
-      sameSite: "none",
-      secure: true,
-    });
-    res.cookie("refreshToken", null, {
-      expires: new Date(0),
-      httpOnly: false,
-      sameSite: "none",
-      secure: true,
-    });
-    return res.status(200).send({
-      success: true,
-      message: "Sign out successfully",
-    });
+    return res.redirect(
+      302,
+      `${process.env.CLIENT_URL}sso-success?accessToken=${accessToken}&refreshToken=${refreshToken}`
+    );
   },
 
   async getMe(req, res) {
@@ -124,9 +86,9 @@ module.exports = {
   },
 
   async refresh(req, res) {
-    if (req?.cookies?.refreshToken) {
+    if (req?.body?.refreshToken) {
       const decoded = checkToken(
-        req?.cookies?.refreshToken,
+        req.body.refreshToken,
         process.env.RT_SECRET_KEY
       );
 
@@ -145,17 +107,9 @@ module.exports = {
         { expiresIn: process.env.AT_EXPIRATION_TIME }
       );
 
-      res.cookie("accessToken", accessToken, {
-        httpOnly: false,
-        sameSite: "none",
-        secure: true,
-      });
-
-      const { password, ...data } = user;
-
       return res.status(200).send({
         success: true,
-        data: data,
+        data: { accessToken: accessToken },
         message: null,
       });
     }
