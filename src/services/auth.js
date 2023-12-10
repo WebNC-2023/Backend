@@ -7,7 +7,8 @@ module.exports = {
   signIn: async ({ email, password }) => {
     const user = await usersService.getUserByEmail(email);
 
-    if (!user) return { code: 401, message: "Email or Password wrong!" };
+    if (!user || !user.password)
+      return { code: 401, message: "Email or Password wrong!" };
 
     if (user.activeCode)
       return {
