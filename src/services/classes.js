@@ -27,6 +27,7 @@ module.exports = {
           c."part",
           c."topic",
           c."room",
+          c."avatar",
           c."dateCreated",
           a."role",
           jsonb_build_object('id', u.id, 'firstName', u."firstName", 'lastName', u."lastName", 'email', u."email", 'avatar', u."avatar") AS owner,
