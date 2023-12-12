@@ -44,9 +44,9 @@ CREATE TABLE "AttendanceInvite" (
 INSERT INTO "Users"("firstName", "lastName", "email") 
 VALUES ('Tan', 'Tân', 'duytan030522@gmail.com');
 
-INSERT INTO "Classes"(id, "name", "ownerId") 
-VALUES ('avc1ccacac', 'new Class', 1);
+INSERT INTO "Classes"("id", "name", "ownerId") 
+VALUES ('avcccacac', 'new Class', 1);
 
 INSERT INTO "Attendance"("userId", "classId", "role") 
-VALUES (1, 'avc', 'teacher');
+VALUES (1, 'avcccacac', 'teacher');
 

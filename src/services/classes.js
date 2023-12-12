@@ -50,6 +50,7 @@ module.exports = {
           c."topic",
           c."room",
           c."dateCreated",
+          c."avatar",
           a."role",
           jsonb_build_object('id', u.id, 'firstName', u."firstName", 'lastName', u."lastName", 'email', u."email", 'avatar', u."avatar") AS owner,
           CASE WHEN u.id = $2 THEN true ELSE false END AS "isOwner"
