@@ -94,28 +94,6 @@ router.post("/sign-in", authValidator.signIn, authController.signIn);
 
 /**
  * @swagger
- * /auth/sign-out:
- *   post:
- *     tags: [Auth]
- *     responses:
- *       '200':
- *         description: A successful response
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   type: object
- *                 message:
- *                   type: string
- */
-router.post("/sign-out", authController.signOut);
-
-/**
- * @swagger
  * /auth/me:
  *   get:
  *     tags: [Auth]
@@ -139,8 +117,17 @@ router.get("/me", requireAuth, authController.getMe);
 /**
  * @swagger
  * /auth/refresh:
- *   get:
+ *   post:
  *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               refreshToken:
+ *                 type: string
  *     responses:
  *       '200':
  *         description: A successful response
@@ -156,7 +143,7 @@ router.get("/me", requireAuth, authController.getMe);
  *                 message:
  *                   type: string
  */
-router.get("/refresh", authController.refresh);
+router.post("/refresh", authController.refresh);
 
 /**
  * @swagger

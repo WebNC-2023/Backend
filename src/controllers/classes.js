@@ -164,6 +164,13 @@ module.exports = {
       }
 
       await classesService.attend(req.user.sub, req.params.id, ROLE.student);
+      const isInviteExist = await classesService.getInviteExist(
+        req.user.email,
+        req.params.id
+      );
+      if (isInviteExist) {
+        await classesService.removeInviteAttend(req.user.email, req.params.id);
+      }
 
       return res.status(201).send({
         success: true,
