@@ -29,7 +29,7 @@ module.exports = {
           c."room",
           c."dateCreated",
           a."role",
-          jsonb_build_object('id', u.id, 'firstName', u."firstName", 'lastName', u."lastName", 'email', u."email") AS owner,
+          jsonb_build_object('id', u.id, 'firstName', u."firstName", 'lastName', u."lastName", 'email', u."email", 'avatar', u."avatar") AS owner,
           CASE WHEN u.id = ${userId} THEN true ELSE false END AS "isOwner"
         FROM "Attendance" a
         JOIN "Classes" c ON c.id = a."classId"
