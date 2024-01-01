@@ -103,7 +103,7 @@ router.get("", requireAuth, classesController.getAll);
 router.get(
   "/:id",
   requireAuth,
-  classesValidator.pramId,
+  classesValidator.paramId,
   classesController.getById
 );
 
@@ -134,7 +134,7 @@ router.get(
  *                 message:
  *                   type: string
  */
-router.get("/:id/find", classesValidator.pramId, classesController.findById);
+router.get("/:id/find", classesValidator.paramId, classesController.findById);
 
 /**
  * @swagger
@@ -219,7 +219,7 @@ router.patch(
 router.delete(
   "/:id",
   requireAuth,
-  classesValidator.pramId,
+  classesValidator.paramId,
   classesController.delete
 );
 
@@ -253,7 +253,7 @@ router.delete(
 router.post(
   "/:id/attend",
   requireAuth,
-  classesValidator.pramId,
+  classesValidator.paramId,
   classesController.attend
 );
 
@@ -286,7 +286,7 @@ router.post(
 router.post(
   "/:id/leave",
   requireAuth,
-  classesValidator.pramId,
+  classesValidator.paramId,
   classesController.leave
 );
 
@@ -405,7 +405,7 @@ router.post(
 router.post(
   "/:id/accept",
   requireAuth,
-  classesValidator.pramId,
+  classesValidator.paramId,
   classesController.accept
 );
 
