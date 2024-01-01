@@ -50,6 +50,7 @@ module.exports = {
           c."part",
           c."topic",
           c."room",
+          c."orderAssignment",
           c."dateCreated",
           c."avatar",
           a."role",
@@ -117,7 +118,7 @@ module.exports = {
     return [...rsAttended.rows, ...rsPending.rows];
   },
 
-  update: async ({ id, name, part, topic, room, avatar }) => {
+  update: async ({ id, name, part, topic, room, avatar, orderAssignment }) => {
     const res = await db.query(
       `
         SELECT * from "Classes"
@@ -138,6 +139,9 @@ module.exports = {
       part !== undefined ? part : currentClass.part,
       topic !== undefined ? topic : currentClass.topic,
       room !== undefined ? room : currentClass.room,
+      orderAssignment !== undefined
+        ? orderAssignment
+        : currentClass.orderAssignment,
       avatar?.name || currentClass.avatar,
       id,
     ];
@@ -145,8 +149,8 @@ module.exports = {
     const rs = await db.query(
       `
         UPDATE "Classes"
-        SET "name" = $1, "part" = $2, "topic" = $3, "room" = $4, "avatar" = $5
-        WHERE id = $6
+        SET "name" = $1, "part" = $2, "topic" = $3, "room" = $4, "orderAssignment" = $5, "avatar" = $6
+        WHERE id = $7
         RETURNING *
       `,
       updatedClassData

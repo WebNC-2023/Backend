@@ -1,4 +1,6 @@
 const classesService = require("../services/classes");
+const assignmentsService = require("../services/assignments");
+const scoresService = require("../services/scores");
 const { ROLE } = require("../constants");
 
 module.exports = {
@@ -52,6 +54,37 @@ module.exports = {
       }
 
       classData.people = await classesService.getPeople(req.params.id);
+
+      const role = await classesService.getRoleInClass(
+        req.user.sub,
+        req.params.id
+      );
+
+      let assignments;
+      if (role === ROLE.teacher) {
+        assignments = await assignmentsService.getByClassIdForTeacher(
+          req.params.id
+        );
+
+        const reviews = await scoresService.getAllRequestReviewByClassId(
+          req.params.id
+        );
+        classData.reviews = reviews;
+      } else {
+        assignments = await assignmentsService.getByClassIdForStudent(
+          req.params.id
+        );
+      }
+
+      if (classData.orderAssignment) {
+        const order = classData.orderAssignment.split(", ").map(Number);
+        assignments = assignments.sort(
+          (a, b) =>
+            order.findIndex((o) => o === a.id) -
+            order.findIndex((o) => o === b.id)
+        );
+      }
+      classData.assignments = assignments;
 
       return res.status(200).send({
         success: true,
