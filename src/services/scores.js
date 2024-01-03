@@ -147,6 +147,7 @@ module.exports = {
           r."expectScore",
           r."scoreAgain",
           r."explanation",
+          r.id AS "reviewId",
           jsonb_build_object('id', u.id, 'firstName', u."firstName", 'lastName', u."lastName", 'email', u."email", 'avatar', u."avatar") AS student
         FROM "Assignments" a
         JOIN "Scores" s ON s."assignmentId"=a."id"
