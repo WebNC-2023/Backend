@@ -3,6 +3,7 @@ const requireAuth = require("../middlewares/requireAuth");
 const classesController = require("../controllers/classes");
 const classesValidator = require("../middlewares/validators/classes");
 const upload = require("../configs/upload");
+const requireAdmin = require("../middlewares/requireAdmin");
 
 const router = app.Router();
 
@@ -407,6 +408,76 @@ router.post(
   requireAuth,
   classesValidator.paramId,
   classesController.accept
+);
+
+/**
+ * @swagger
+ * /classes/{id}/inactive:
+ *   post:
+ *     tags: [Classes]
+ *     summary: For admin
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: A successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                 message:
+ *                   type: string
+ */
+router.post(
+  "/:id/inactive",
+  requireAuth,
+  requireAdmin,
+  classesValidator.paramId,
+  classesController.inactive
+);
+
+/**
+ * @swagger
+ * /classes/{id}/active:
+ *   post:
+ *     tags: [Classes]
+ *     summary: For admin
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: A successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                 message:
+ *                   type: string
+ */
+router.post(
+  "/:id/active",
+  requireAuth,
+  requireAdmin,
+  classesValidator.paramId,
+  classesController.active
 );
 
 module.exports = router;
