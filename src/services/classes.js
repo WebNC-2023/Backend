@@ -28,6 +28,7 @@ module.exports = {
           c."topic",
           c."room",
           c."avatar",
+          c."isActive",
           c."dateCreated",
           a."role",
           jsonb_build_object('id', u.id, 'firstName', u."firstName", 'lastName', u."lastName", 'email', u."email", 'avatar', u."avatar") AS owner,
@@ -36,6 +37,26 @@ module.exports = {
         JOIN "Classes" c ON c.id = a."classId"
         JOIN "Users" u ON u.id = c."ownerId"
         WHERE a."userId"=${userId}
+      `
+    );
+    return rs.rows;
+  },
+
+  getAllForAdmin: async () => {
+    const rs = await db.query(
+      `
+        SELECT
+          c.id,
+          c."name",
+          c."part",
+          c."topic",
+          c."room",
+          c."avatar",
+          c."isActive",
+          c."dateCreated",
+          jsonb_build_object('id', u.id, 'firstName', u."firstName", 'lastName', u."lastName", 'email', u."email", 'avatar', u."avatar") AS owner
+        FROM "Classes" c
+        JOIN "Users" u ON u.id = c."ownerId"
       `
     );
     return rs.rows;
@@ -53,6 +74,7 @@ module.exports = {
           c."orderAssignment",
           c."dateCreated",
           c."avatar",
+          c."isActive",
           a."role",
           jsonb_build_object('id', u.id, 'firstName', u."firstName", 'lastName', u."lastName", 'email', u."email", 'avatar', u."avatar") AS owner,
           CASE WHEN u.id = $2 THEN true ELSE false END AS "isOwner"
@@ -257,5 +279,33 @@ module.exports = {
       currentClass,
       role
     );
+  },
+
+  active: async (id) => {
+    const rs = await db.query(
+      `
+        UPDATE "Classes"
+        SET "isActive" = $1
+        WHERE id = $2
+        RETURNING *
+      `,
+      [true, id]
+    );
+
+    return rs.rows.length > 0 ? rs.rows[0] : null;
+  },
+
+  inactive: async (id) => {
+    const rs = await db.query(
+      `
+        UPDATE "Classes"
+        SET "isActive" = $1
+        WHERE id = $2
+        RETURNING *
+      `,
+      [false, id]
+    );
+
+    return rs.rows.length > 0 ? rs.rows[0] : null;
   },
 };

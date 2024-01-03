@@ -26,7 +26,9 @@ module.exports = {
 
   async getAll(req, res) {
     try {
-      const classes = await classesService.getAll(req.user.sub);
+      const classes = req.user.isAdmin
+        ? await classesService.getAllForAdmin()
+        : await classesService.getAll(req.user.sub);
 
       return res.status(200).send({
         success: true,
@@ -50,6 +52,13 @@ module.exports = {
         return res.status(404).send({
           success: false,
           message: "Class not found",
+        });
+      }
+
+      if (!classData.isActive) {
+        return res.status(400).send({
+          success: false,
+          message: "Class is inactive",
         });
       }
 
@@ -108,6 +117,13 @@ module.exports = {
         });
       }
 
+      if (!classData.isActive) {
+        return res.status(400).send({
+          success: false,
+          message: "Class is inactive",
+        });
+      }
+
       return res.status(200).send({
         success: true,
         data: classData,
@@ -125,13 +141,21 @@ module.exports = {
         req.user.sub,
         req.params.id
       );
-
       if (role !== ROLE.teacher) {
         return res.status(403).send({
           success: false,
           message: "Forbidden",
         });
       }
+
+      const classData = await classesService.getClass(req.params.id);
+      if (!classData.isActive) {
+        return res.status(400).send({
+          success: false,
+          message: "Class is inactive",
+        });
+      }
+
       const updatedClass = await classesService.update({
         ...req.body,
         avatar: req?.file || null,
@@ -182,6 +206,12 @@ module.exports = {
         return res.status(404).send({
           success: false,
           message: "Class not found",
+        });
+      }
+      if (!currentClass.isActive) {
+        return res.status(400).send({
+          success: false,
+          message: "Class is inactive",
         });
       }
 
@@ -357,6 +387,36 @@ module.exports = {
       return res.status(200).send({
         success: true,
         message: "Join class successfully",
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Internal Server Error");
+    }
+  },
+
+  async active(req, res) {
+    try {
+      const updatedClass = await classesService.active(req.params.id);
+
+      return res.status(200).send({
+        success: true,
+        data: updatedClass,
+        message: "Active class successfully",
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Internal Server Error");
+    }
+  },
+
+  async inactive(req, res) {
+    try {
+      const updatedClass = await classesService.inactive(req.params.id);
+
+      return res.status(200).send({
+        success: true,
+        data: updatedClass,
+        message: "Inactive class successfully",
       });
     } catch (error) {
       console.log(error);
