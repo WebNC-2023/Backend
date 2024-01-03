@@ -8,6 +8,7 @@ CREATE TABLE "Users" (
   "password" varchar(255),
   "avatar" varchar(255),
   "activeCode" varchar(255),
+  "isBlocked" BOOLEAN DEFAULT FALSE,
   "resetPasswordCode" varchar(255)
 );
 
@@ -78,8 +79,8 @@ CREATE TABLE "Reviews" (
   "id" SERIAL PRIMARY KEY NOT NULL,
   "scoreId" INT NOT NULL UNIQUE REFERENCES "Scores"(id) ON DELETE CASCADE,
   "expectScore" INT NOT NULL,
-  "explanation" VARCHAR(255),
-  "scoreAgain" INT NOT NULL,
+  "explanation" VARCHAR(255) NOT NULL,
+  "scoreAgain" INT
 );
 
 DROP TABLE IF EXISTS "Comments";
@@ -90,4 +91,3 @@ CREATE TABLE "Comments" (
   "comment" varchar(255) NOT NULL,
   "dateCreated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
