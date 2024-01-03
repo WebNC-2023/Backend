@@ -415,6 +415,7 @@ router.post(
  * /classes/{id}/inactive:
  *   post:
  *     tags: [Classes]
+ *     summary: For admin
  *     parameters:
  *       - in: path
  *         name: id
@@ -422,7 +423,7 @@ router.post(
  *         schema:
  *           type: string
  *     responses:
- *       '201':
+ *       '200':
  *         description: A successful response
  *         content:
  *           application/json:
@@ -449,6 +450,7 @@ router.post(
  * /classes/{id}/active:
  *   post:
  *     tags: [Classes]
+ *     summary: For admin
  *     parameters:
  *       - in: path
  *         name: id
@@ -456,7 +458,7 @@ router.post(
  *         schema:
  *           type: string
  *     responses:
- *       '201':
+ *       '200':
  *         description: A successful response
  *         content:
  *           application/json:

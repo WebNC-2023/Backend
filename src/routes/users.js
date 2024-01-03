@@ -104,6 +104,7 @@ router.patch(
  * /users:
  *   get:
  *     tags: [Users]
+ *     summary: For admin
  *     responses:
  *       '200':
  *         description: A successful response
@@ -126,6 +127,13 @@ router.get("", requireAdmin, usersController.getAll);
  * /users/{id}/block:
  *   get:
  *     tags: [Users]
+ *     summary: For admin
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: number
  *     responses:
  *       '200':
  *         description: A successful response
@@ -145,9 +153,16 @@ router.post("/:id/block", requireAdmin, usersController.block);
 
 /**
  * @swagger
- * /users:
+ * /users/{id}/unblock:
  *   get:
  *     tags: [Users]
+ *     summary: For admin
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: number
  *     responses:
  *       '200':
  *         description: A successful response
