@@ -19,6 +19,7 @@ CREATE TABLE "Classes" (
   "topic" varchar(100),
   "room" varchar(100),
   "avatar" varchar(255),
+  "isActive" BOOLEAN DEFAULT TRUE,
   "orderAssignment" varchar(255),
   "ownerId" INT NOT NULL REFERENCES "Users"(id) ON DELETE CASCADE,
   "dateCreated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
