@@ -8,6 +8,7 @@ CREATE TABLE "Users" (
   "password" varchar(255),
   "avatar" varchar(255),
   "activeCode" varchar(255),
+  "isBlocked" BOOLEAN DEFAULT FALSE,
   "resetPasswordCode" varchar(255)
 );
 
@@ -19,6 +20,8 @@ CREATE TABLE "Classes" (
   "topic" varchar(100),
   "room" varchar(100),
   "avatar" varchar(255),
+  "isActive" BOOLEAN DEFAULT TRUE,
+  "orderAssignment" varchar(255),
   "ownerId" INT NOT NULL REFERENCES "Users"(id) ON DELETE CASCADE,
   "dateCreated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -41,12 +44,50 @@ CREATE TABLE "AttendanceInvite" (
   UNIQUE ("email", "classId")
 );
 
-INSERT INTO "Users"("firstName", "lastName", "email") 
-VALUES ('Tan', 'Tân', 'duytan030522@gmail.com');
+DROP TABLE IF EXISTS "AttendanceInvite";
+CREATE TABLE "AttendanceInvite" (
+  "id" SERIAL PRIMARY KEY NOT NULL,
+  "email" varchar(100) NOT NULL,
+  "classId" varchar(10) NOT NULL REFERENCES "Classes"(id) ON DELETE CASCADE,
+  "role" VARCHAR(10) CHECK (role IN ('teacher', 'student')) NOT NULL,
+  UNIQUE ("email", "classId")
+);
 
-INSERT INTO "Classes"(id, "name", "ownerId") 
-VALUES ('avc1ccacac', 'new Class', 1);
+DROP TABLE IF EXISTS "Assignments" CASCADE;
+CREATE TABLE "Assignments" (
+  "id" SERIAL PRIMARY KEY NOT NULL,
+  "classId" varchar(10) NOT NULL REFERENCES "Classes"(id) ON DELETE CASCADE,
+  "title" VARCHAR(255) NOT NULL,
+  "description" VARCHAR(255),
+  "deadline" TIMESTAMP,
+  "type" VARCHAR(10) CHECK (type IN ('exercise', 'exam')) NOT NULL,
+  "dateCreated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-INSERT INTO "Attendance"("userId", "classId", "role") 
-VALUES (1, 'avc', 'teacher');
+DROP TABLE IF EXISTS "Scores" CASCADE;
+CREATE TABLE "Scores" (
+  "id" SERIAL PRIMARY KEY NOT NULL ,
+  "studentId" INT NOT NULL REFERENCES "Users"(id) ON DELETE CASCADE,
+  "assignmentId" INT NOT NULL REFERENCES "Assignments"(id) ON DELETE CASCADE,
+  "score" INT,
+  "isReturned" BOOLEAN DEFAULT FALSE,
+  UNIQUE ("studentId", "assignmentId")
+);
 
+DROP TABLE IF EXISTS "Reviews" CASCADE;
+CREATE TABLE "Reviews" (
+  "id" SERIAL PRIMARY KEY NOT NULL,
+  "scoreId" INT NOT NULL UNIQUE REFERENCES "Scores"(id) ON DELETE CASCADE,
+  "expectScore" INT NOT NULL,
+  "explanation" VARCHAR(255) NOT NULL,
+  "scoreAgain" INT
+);
+
+DROP TABLE IF EXISTS "Comments";
+CREATE TABLE "Comments" (
+  "id" SERIAL PRIMARY KEY NOT NULL,
+  "userId" INT NOT NULL REFERENCES "Users"(id) ON DELETE CASCADE,
+  "reviewId" INT NOT NULL REFERENCES "Reviews"(id) ON DELETE CASCADE,
+  "comment" varchar(255) NOT NULL,
+  "dateCreated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

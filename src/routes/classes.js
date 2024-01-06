@@ -3,6 +3,7 @@ const requireAuth = require("../middlewares/requireAuth");
 const classesController = require("../controllers/classes");
 const classesValidator = require("../middlewares/validators/classes");
 const upload = require("../configs/upload");
+const requireAdmin = require("../middlewares/requireAdmin");
 
 const router = app.Router();
 
@@ -103,7 +104,7 @@ router.get("", requireAuth, classesController.getAll);
 router.get(
   "/:id",
   requireAuth,
-  classesValidator.pramId,
+  classesValidator.paramId,
   classesController.getById
 );
 
@@ -134,7 +135,7 @@ router.get(
  *                 message:
  *                   type: string
  */
-router.get("/:id/find", classesValidator.pramId, classesController.findById);
+router.get("/:id/find", classesValidator.paramId, classesController.findById);
 
 /**
  * @swagger
@@ -219,7 +220,7 @@ router.patch(
 router.delete(
   "/:id",
   requireAuth,
-  classesValidator.pramId,
+  classesValidator.paramId,
   classesController.delete
 );
 
@@ -253,7 +254,7 @@ router.delete(
 router.post(
   "/:id/attend",
   requireAuth,
-  classesValidator.pramId,
+  classesValidator.paramId,
   classesController.attend
 );
 
@@ -286,7 +287,7 @@ router.post(
 router.post(
   "/:id/leave",
   requireAuth,
-  classesValidator.pramId,
+  classesValidator.paramId,
   classesController.leave
 );
 
@@ -405,8 +406,78 @@ router.post(
 router.post(
   "/:id/accept",
   requireAuth,
-  classesValidator.pramId,
+  classesValidator.paramId,
   classesController.accept
+);
+
+/**
+ * @swagger
+ * /classes/{id}/inactive:
+ *   post:
+ *     tags: [Classes]
+ *     summary: For admin
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: A successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                 message:
+ *                   type: string
+ */
+router.post(
+  "/:id/inactive",
+  requireAuth,
+  requireAdmin,
+  classesValidator.paramId,
+  classesController.inactive
+);
+
+/**
+ * @swagger
+ * /classes/{id}/active:
+ *   post:
+ *     tags: [Classes]
+ *     summary: For admin
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: A successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                 message:
+ *                   type: string
+ */
+router.post(
+  "/:id/active",
+  requireAuth,
+  requireAdmin,
+  classesValidator.paramId,
+  classesController.active
 );
 
 module.exports = router;

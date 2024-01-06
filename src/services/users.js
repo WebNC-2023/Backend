@@ -227,4 +227,41 @@ module.exports = {
 
     return res.rows[0];
   },
+
+  getAll: async () => {
+    const res = await db.query(
+      `
+        SELECT * FROM "Users"
+      `
+    );
+    return res.rows;
+  },
+
+  block: async (id) => {
+    const res = await db.query(
+      `
+        UPDATE "Users"
+        SET "isBlocked" = $1
+        WHERE "id" = $2
+        RETURNING *
+      `,
+      [true, id]
+    );
+
+    return res.rows.length > 0 ? res.rows[0] : null;
+  },
+
+  unblock: async (id) => {
+    const res = await db.query(
+      `
+        UPDATE "Users"
+        SET "isBlocked" = $1
+        WHERE "id" = $2
+        RETURNING *
+      `,
+      [false, id]
+    );
+
+    return res.rows.length > 0 ? res.rows[0] : null;
+  },
 };

@@ -20,7 +20,7 @@ module.exports = {
     validateRequest,
   ],
 
-  pramId: [param("id").isLength({ min: 8 }), validateRequest],
+  paramId: [param("id").isLength({ min: 8 }), validateRequest],
 
   removeMember: [
     param("id").isLength({ min: 1 }),

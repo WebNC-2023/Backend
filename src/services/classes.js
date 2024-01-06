@@ -27,6 +27,8 @@ module.exports = {
           c."part",
           c."topic",
           c."room",
+          c."avatar",
+          c."isActive",
           c."dateCreated",
           a."role",
           jsonb_build_object('id', u.id, 'firstName', u."firstName", 'lastName', u."lastName", 'email', u."email", 'avatar', u."avatar") AS owner,
@@ -35,6 +37,26 @@ module.exports = {
         JOIN "Classes" c ON c.id = a."classId"
         JOIN "Users" u ON u.id = c."ownerId"
         WHERE a."userId"=${userId}
+      `
+    );
+    return rs.rows;
+  },
+
+  getAllForAdmin: async () => {
+    const rs = await db.query(
+      `
+        SELECT
+          c.id,
+          c."name",
+          c."part",
+          c."topic",
+          c."room",
+          c."avatar",
+          c."isActive",
+          c."dateCreated",
+          jsonb_build_object('id', u.id, 'firstName', u."firstName", 'lastName', u."lastName", 'email', u."email", 'avatar', u."avatar") AS owner
+        FROM "Classes" c
+        JOIN "Users" u ON u.id = c."ownerId"
       `
     );
     return rs.rows;
@@ -49,7 +71,10 @@ module.exports = {
           c."part",
           c."topic",
           c."room",
+          c."orderAssignment",
           c."dateCreated",
+          c."avatar",
+          c."isActive",
           a."role",
           jsonb_build_object('id', u.id, 'firstName', u."firstName", 'lastName', u."lastName", 'email', u."email", 'avatar', u."avatar") AS owner,
           CASE WHEN u.id = $2 THEN true ELSE false END AS "isOwner"
@@ -115,7 +140,7 @@ module.exports = {
     return [...rsAttended.rows, ...rsPending.rows];
   },
 
-  update: async ({ id, name, part, topic, room, avatar }) => {
+  update: async ({ id, name, part, topic, room, avatar, orderAssignment }) => {
     const res = await db.query(
       `
         SELECT * from "Classes"
@@ -136,6 +161,9 @@ module.exports = {
       part !== undefined ? part : currentClass.part,
       topic !== undefined ? topic : currentClass.topic,
       room !== undefined ? room : currentClass.room,
+      orderAssignment !== undefined
+        ? orderAssignment
+        : currentClass.orderAssignment,
       avatar?.name || currentClass.avatar,
       id,
     ];
@@ -143,8 +171,8 @@ module.exports = {
     const rs = await db.query(
       `
         UPDATE "Classes"
-        SET "name" = $1, "part" = $2, "topic" = $3, "room" = $4, "avatar" = $5
-        WHERE id = $6
+        SET "name" = $1, "part" = $2, "topic" = $3, "room" = $4, "orderAssignment" = $5, "avatar" = $6
+        WHERE id = $7
         RETURNING *
       `,
       updatedClassData
@@ -251,5 +279,33 @@ module.exports = {
       currentClass,
       role
     );
+  },
+
+  active: async (id) => {
+    const rs = await db.query(
+      `
+        UPDATE "Classes"
+        SET "isActive" = $1
+        WHERE id = $2
+        RETURNING *
+      `,
+      [true, id]
+    );
+
+    return rs.rows.length > 0 ? rs.rows[0] : null;
+  },
+
+  inactive: async (id) => {
+    const rs = await db.query(
+      `
+        UPDATE "Classes"
+        SET "isActive" = $1
+        WHERE id = $2
+        RETURNING *
+      `,
+      [false, id]
+    );
+
+    return rs.rows.length > 0 ? rs.rows[0] : null;
   },
 };
