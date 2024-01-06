@@ -109,7 +109,6 @@ module.exports = {
   async findById(req, res) {
     try {
       const classData = await classesService.findById(req.params.id);
-
       if (!classData) {
         return res.status(404).send({
           success: false,

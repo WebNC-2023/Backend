@@ -98,7 +98,8 @@ module.exports = {
           c."part",
           c."topic",
           c."room",
-          c."dateCreated"
+          c."dateCreated",
+          c."isActive"
         FROM "Classes" c
         WHERE c.id=$1;
       `,
