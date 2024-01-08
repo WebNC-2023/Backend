@@ -4,6 +4,7 @@ const filesRouter = require("./files");
 const classesRouter = require("./classes");
 const assignmentsRouter = require("./assignments");
 const scoresRouter = require("./scores");
+const notificationsRouter = require("./notifications");
 
 const route = (app) => {
   app.use("/auth", authRouter);
@@ -12,6 +13,7 @@ const route = (app) => {
   app.use("/classes", classesRouter);
   app.use("/assignments", assignmentsRouter);
   app.use("/scores", scoresRouter);
+  app.use("/notifications", notificationsRouter);
 };
 
 module.exports = route;

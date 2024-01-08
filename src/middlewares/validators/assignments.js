@@ -11,7 +11,7 @@ module.exports = {
       .optional({ nullable: true })
       .isISO8601()
       .toDate(),
-    body("assignments.*.scores").optional().isArray(),
+    body("assignments.*.scores").optional({ nullable: true }).isArray(),
     body("assignments.*.scores.*.score").optional({ nullable: true }).isInt(),
     body("assignments.*.scores.*.studentId").isInt(),
     body("assignments.*.scores.*.isReturned").isBoolean(),
