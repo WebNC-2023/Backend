@@ -91,3 +91,14 @@ CREATE TABLE "Comments" (
   "comment" varchar(255) NOT NULL,
   "dateCreated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+DROP TABLE IF EXISTS "Notifications";
+CREATE TABLE "Notifications" (
+  "id" SERIAL PRIMARY KEY NOT NULL,
+  "content" varchar(255) NOT NULL,
+  "link" varchar(255) NOT NULL,
+  "sender" INT NOT NULL REFERENCES "Users"(id) ON DELETE CASCADE,
+  "receiver" INT NOT NULL REFERENCES "Users"(id) ON DELETE CASCADE,
+  "isRead" BOOLEAN DEFAULT FALSE,
+  "dateCreated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

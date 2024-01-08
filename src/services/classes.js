@@ -109,6 +109,26 @@ module.exports = {
     return rs.rows.length !== 0 ? rs.rows[0] : null;
   },
 
+  getTeacherInClass: async (classId) => {
+    const rs = await db.query(
+      `
+        SELECT 
+          u."id",
+          u."firstName",
+          u."lastName",
+          u."email",
+          u."avatar",
+          a."role"
+        FROM "Attendance" a
+        JOIN "Users" u ON a."userId" = u.id
+        WHERE a."classId"=$1 AND a."role" = 'teacher';
+      `,
+      [classId]
+    );
+
+    return rs.rows;
+  },
+
   getPeople: async (classId) => {
     const rsAttended = await db.query(
       `

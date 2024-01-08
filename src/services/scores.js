@@ -70,8 +70,9 @@ module.exports = {
   getById: async (scoreId) => {
     const rs = await db.query(
       `
-        SELECT *
+        SELECT s.*, a."id" AS "assignmentId", a."title" AS "assignmentTitle", a."classId"
         FROM "Scores" s
+        JOIN "Assignments" a ON a."id" = s."assignmentId"
         WHERE s."id" = $1
       `,
       [scoreId]
@@ -246,6 +247,20 @@ module.exports = {
         SELECT *
         FROM "Reviews" r
         WHERE r."scoreId"=$1
+      `,
+      [scoreId]
+    );
+
+    return rs.rows.length > 0 ? rs.rows[0] : null;
+  },
+
+  getAssignmentByScoreId: async (scoreId) => {
+    const rs = await db.query(
+      `
+        SELECT a.*, s."studentId"
+        FROM "Scores" s
+        JOIN "Assignments" a ON s."assignmentId" = a."id"
+        WHERE s."id"=$1
       `,
       [scoreId]
     );

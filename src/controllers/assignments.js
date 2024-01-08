@@ -1,7 +1,9 @@
 const classesService = require("../services/classes");
 const assignmentsService = require("../services/assignments");
 const scoresService = require("../services/scores");
+const notificationsService = require("../services/notifications");
 const { ROLE } = require("../constants");
+const { sendUpdateNotification } = require("../services/socket");
 
 module.exports = {
   async create(req, res) {
@@ -99,7 +101,11 @@ module.exports = {
       ].map((assignment) => {
         if (!assignment.scores) return [];
         return assignment.scores.map((score) => {
-          return { ...score, assignmentId: assignment.id };
+          return {
+            ...score,
+            assignmentId: assignment.id,
+            assignmentTitle: assignment.title,
+          };
         });
       });
       const assignmentScoresFlat = assignmentScores.flat();
@@ -109,13 +115,40 @@ module.exports = {
           (score) => !assignmentScoresFlat.find((s) => score.id === s.id)
         )
       );
-      await scoresService.createBulk(
-        assignmentScoresFlat.filter((score) => !score.id)
-      );
-      await scoresService.updateBulk(
-        assignmentScoresFlat.filter((score) => score.id)
-      );
+      const createScores = assignmentScoresFlat.filter((score) => !score.id);
+      const updateScores = assignmentScoresFlat.filter((score) => score.id);
+      await scoresService.createBulk(createScores);
+      await scoresService.updateBulk(updateScores);
 
+      // notifications
+      const scoresReturned = [];
+      createScores.forEach((score) => {
+        if (score.isReturned) {
+          scoresReturned.push(score);
+        }
+      });
+      updateScores.forEach((score) => {
+        const oldScore = oldScores.find((s) => s.id === score.id);
+        if (score.isReturned && !oldScore.isReturned) {
+          scoresReturned.push(score);
+        }
+      });
+
+      if (scoresReturned.length > 0) {
+        const rs = await Promise.all(
+          scoresReturned.map(async (s) => {
+            const res = await notificationsService.create(
+              `mark as finalized score in assignment "${s.assignmentTitle}"`,
+              `/assignment-details/${s.assignmentId}`,
+              req.user.sub,
+              s.studentId
+            );
+            return res;
+          })
+        );
+
+        sendUpdateNotification(rs.map((n) => n.receiver));
+      }
       return res.status(200).send({
         success: true,
         message: "Update assignments successfully",
