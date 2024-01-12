@@ -199,6 +199,19 @@ module.exports = {
 
     return rs.rows.length !== 0 ? rs.rows[0] : null;
   },
+  checkCode: async (activeCode) => {
+    const res = await db.query(
+      `
+        SELECT * FROM "Users"
+        WHERE "activeCode" = $1
+        RETURNING *
+      `,
+      [activeCode]
+    );
+    if (res.rows.length === 0) return false;
+
+    return true;
+  },
 
   activeAccount: async (activeCode) => {
     const res = await db.query(
@@ -213,5 +226,42 @@ module.exports = {
     if (res.rows.length === 0) return false;
 
     return res.rows[0];
+  },
+
+  getAll: async () => {
+    const res = await db.query(
+      `
+        SELECT * FROM "Users"
+      `
+    );
+    return res.rows;
+  },
+
+  block: async (id) => {
+    const res = await db.query(
+      `
+        UPDATE "Users"
+        SET "isBlocked" = $1
+        WHERE "id" = $2
+        RETURNING *
+      `,
+      [true, id]
+    );
+
+    return res.rows.length > 0 ? res.rows[0] : null;
+  },
+
+  unblock: async (id) => {
+    const res = await db.query(
+      `
+        UPDATE "Users"
+        SET "isBlocked" = $1
+        WHERE "id" = $2
+        RETURNING *
+      `,
+      [false, id]
+    );
+
+    return res.rows.length > 0 ? res.rows[0] : null;
   },
 };

@@ -15,6 +15,12 @@ module.exports = {
         code: 403,
         message: "Your account has not been activated!",
       };
+
+    if (user.isBlocked)
+      return {
+        code: 400,
+        message: "Your account has been blocked!",
+      };
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     return isValidPassword
