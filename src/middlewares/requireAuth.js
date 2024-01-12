@@ -12,8 +12,12 @@ passport.use(
   new JwtStrategy(jwtOptions, async (payload, done) => {
     const user = await usersService.getUserById(payload.sub);
 
-    if (user) {
-      return done(null, { sub: user.id, email: user.email });
+    if (user && !user.isBlocked) {
+      return done(null, {
+        sub: user.id,
+        email: user.email,
+        isAdmin: user.email === process.env.ADMIN_MAIL,
+      });
     } else {
       return done(null, false);
     }

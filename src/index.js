@@ -5,6 +5,8 @@ const route = require("./routes");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJSDoc = require("swagger-jsdoc");
 const cookieParser = require("cookie-parser");
+const http = require("http");
+const { startWebSocketServer } = require("./services/socket");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -49,6 +51,9 @@ app.use(
 
 route(app);
 
-app.listen(port, () => {
+const server = http.createServer(app);
+startWebSocketServer(server);
+
+server.listen(port, () => {
   console.log(`App listening on port ${port}`);
 });
